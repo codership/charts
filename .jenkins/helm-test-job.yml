@@ -1,0 +1,26 @@
+- job:
+    name: helm-test-job
+    project-type: pipeline
+    sandbox: true
+    properties:
+      - build-discarder:
+          num-to-keep: 10
+    parameters:
+      - string:
+          name: GIT_TARGET
+          default: "main"
+          description: "Branch, Tag or commit hash"
+      - bool:
+          name: RELEASE
+          default: false
+          description: "Push to release repository instead of test"
+    pipeline-scm:
+      scm:
+        - git:
+            url: git@github.com:codership/containers.git
+            credentials-id: '4767db11-ae93-4aaf-91f9-3b9c728b5249'
+            branches:
+              - ${{GIT_TARGET}}
+            clean: true
+      script-path: .jenkins/helm-test-job.groovy
+      lightweight-checkout: true
