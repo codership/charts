@@ -1,3 +1,7 @@
+#######################################
+# TEST VARIABLES. NOT FOR PRODUCTION! #
+#######################################
+#
 REPOSITORY="codership/mysql-galera"
 TAG="8.0.40"
 #
