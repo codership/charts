@@ -75,6 +75,14 @@ pipeline {
       }
     }
 
+    stage('Init Minikube') {
+      steps {
+        echo "Preparing Minikube..."
+        sh "minikube delete"
+        sh "minikube start"
+      }
+    }
+
     stage('Info') {
       steps {
         sh "docker version ||:"
@@ -84,33 +92,11 @@ pipeline {
       }
     }
 
-    stage('Docker Image') {
-      steps {
-        sh '''
-            MYSQL_RPM_VERSION="$MYSQL_VERSION-$WSREP_VERSION"
-            docker build \
-              --no-cache --pull \
-              --build-arg RH_VERSION=${RH_VERSION} \
-              --build-arg MYSQL_RPM_VERSION=${MYSQL_RPM_VERSION} \
-              -t ${REPOSITORY}:${TAG} -f mysql-galera/image/Dockerfile mysql-galera/image
-            docker push ${REPOSITORY}:${TAG}
-            '''
-      }
-    }
-
-    stage('Init Minikube') {
-      steps {
-        echo "Preparing Minikube..."
-        sh "minikube delete"
-        sh "minikube start"
-      }
-    }
-
     stage('Helm Installation') {
       steps {
         echo "Testing Helm installation..."
         sh """
-          pushd mysql-galera/helm
+          pushd mysql-galera
             bash -x set_values.sh \
             --repo ${REPOSITORY} \
             --tag ${TAG} \
@@ -121,8 +107,8 @@ pipeline {
             --docker-pw ${DOCKERHUBCREDS_PSW}
           popd
           """
-        sh "cat mysql-galera/helm/values.yaml"
-        sh "helm install ${HELM_PROJECT} mysql-galera/helm --namespace ${HELM_PROJECT} --create-namespace"
+        sh "cat mysql-galera/values.yaml"
+        sh "helm install ${HELM_PROJECT} mysql-galera --namespace ${HELM_PROJECT} --create-namespace"
         echo "Waiting for manifests to deploy..."
         sleep(90)
       }
@@ -158,13 +144,13 @@ pipeline {
         }
 
         script {
-          root_password = sh (script: "grep rootpw mysql-galera/helm/values.yaml | awk '{print \$2}'",
+          root_password = sh (script: "grep rootpw mysql-galera/values.yaml | awk '{print \$2}'",
                               returnStdout: true
                               ).trim()
-          mysql_user = sh (script: "grep '[[:blank:]]name:' mysql-galera/helm/values.yaml | awk '{print \$2}'",
+          mysql_user = sh (script: "grep '[[:blank:]]name:' mysql-galera/values.yaml | awk '{print \$2}'",
                            returnStdout: true
                            ).trim()
-          mysql_passwd = sh (script: "grep 'passwd:' mysql-galera/helm/values.yaml | awk '{print \$2}'",
+          mysql_passwd = sh (script: "grep 'passwd:' mysql-galera/values.yaml | awk '{print \$2}'",
                              returnStdout: true
                              ).trim()
         }
@@ -240,7 +226,7 @@ pipeline {
 
   post {
     success {
-      build job: 'helm-release-job', wait: false,
+      build job: 'mysql-galera-helm-tarball', wait: false,
         parameters: [
           string(name: 'GIT_TARGET', value: env.GIT_COMMIT ),
           booleanParam( name: 'RELEASE', value: env.RELEASE)

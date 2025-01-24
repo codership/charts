@@ -12,7 +12,7 @@ pipeline {
         script{
           //
           //commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
-          version = sh(script: "grep appVersion mysql-galera/helm/Chart.yaml | awk '{print \$NF}' | sed -e 's:\"::g'",
+          version = sh(script: "grep appVersion mysql-galera/Chart.yaml | awk '{print \$NF}' | sed -e 's:\"::g'",
                        returnStdout: true).trim()
 
           if (env.RELEASE == "true") {
@@ -30,14 +30,14 @@ pipeline {
         echo "Making Helm release from git: $GIT_COMMIT"
         sh """
             set -x
-            cp -a mysql-galera/helm $directory
+            cp -a mysql-galera $directory
             pushd $directory
               ./set_values.sh \
                     --repo   "$REPOSITORY" \
                     --rootpw "@@SET_ME@@" \
                     --dbuser "@@SET_ME@@" \
                     --userpw "@@SET_ME@@"
-              rm -vf values.tmpl set_values.sh
+              rm -vf values.tmpl set_values.sh VARIABLES
             popd
             """
       }

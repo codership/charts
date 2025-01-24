@@ -1,7 +1,6 @@
 - job:
-    name: helm-release-job
+    name: mysql-galera-helm-test
     project-type: pipeline
-    node: built-in
     sandbox: true
     properties:
       - build-discarder:
@@ -11,24 +10,17 @@
           name: GIT_TARGET
           default: "main"
           description: "Branch, Tag or commit hash"
-      - string:
-          name: RELEASENUM
-          default: "1"
-          description: "Package version"
       - bool:
           name: RELEASE
           default: false
-          description: "Make release tarball instead of test one"
-    triggers:
-      - pollscm:
-          cron: "@daily"
+          description: "Push to release repository instead of test"
     pipeline-scm:
       scm:
         - git:
-            url: git@github.com:codership/containers.git
+            url: git@github.com:codership/charts.git
             credentials-id: '4767db11-ae93-4aaf-91f9-3b9c728b5249'
             branches:
               - ${{GIT_TARGET}}
             clean: true
-      script-path: .jenkins/helm-release-job.groovy
-      lightweight-checkout: false
+      script-path: .jenkins/mysql-galera-helm-test.groovy
+      lightweight-checkout: true
