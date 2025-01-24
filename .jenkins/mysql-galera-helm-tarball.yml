@@ -19,9 +19,6 @@
           name: RELEASE
           default: false
           description: "Make release tarball instead of test one"
-    triggers:
-      - pollscm:
-          cron: "@daily"
     pipeline-scm:
       scm:
         - git:
