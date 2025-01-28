@@ -1,11 +1,5 @@
 questions:
 
-- variable: Release.Namespace
-  default: "mysql-galera"
-  required: true
-  type: string
-  label: MySQL Namespace
-
 - variable: mysql.rootpw
   default: ""
   required: true
