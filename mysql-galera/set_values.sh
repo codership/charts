@@ -10,7 +10,9 @@ if ! test -f values.tmpl; then
   exit 1
 fi
 
-. VARIABLES
+if [[ -f VARIABLES ]]; then
+  . VARIABLES
+fi
 
 while [[ $# -gt 0 ]]; do
   case $1 in
