@@ -6,6 +6,9 @@ Galera Cluster for MySQL is a true Multi-Master Cluster based on synchronous rep
 
 For documentation, Knowledge Base and Support please visit https://galeracluster.com/
 
+Galera Cluster for MySQL Helm Chart: https://galeracluster.com/2024/10/galera-cluster-for-mysql-helm-chart-for-kubernetes/
+MySQL Galera Cluster documentation: https://galeracluster.com/library/documentation/index.html
+
 ## Installation
 1. Plan your cluster capacity. Default is 3 nodes, each with 1 vCPU and 4GB of RAM, the storage is 2GB. It is minimal requirement for Galera to work.
 2. Consider separate namespace for the MySQL Galera cluster, like `mysql-galera`.
