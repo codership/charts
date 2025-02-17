@@ -48,4 +48,8 @@ pushd "${PARTNER_REPO}"
   PACKAGE="codership/${CHART}" ./bin/partner-charts-ci update --commit
   find charts/codership/ -name '*.sh' -exec rm -fv '{}' \;
   find charts/codership/ -name 'VARIABLES' -exec rm -fv '{}' \;
+  git status
+  echo
+  echo "==> Please check the partner repo carefully and run 'git commit --amend' if needed"
+  echo
 popd
